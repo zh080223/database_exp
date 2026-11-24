@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ scene.name }} · 智能驾驶场景查询{% endblock %}
+{% block main %}
+<a class="back" href="{{ url_for('index', **values) }}">‹ 返回场景列表</a>
+<div class="page-heading detail-title">
+  <div>
+    <h1>{{ scene.name }}</h1>
+    <p>{{ scene.location|place }} · {{ scene.start_us|time }} 至 {{ scene.end_us|time }}（UTC+08:00）</p>
+  </div>
+</div>
+<div class="detail-layout">
+  <section class="panel camera-panel">
+    <div class="panel-heading"><h2>前向相机</h2><span class="muted">{{ scene.frames|length }} 张关键帧</span></div>
+    {% if first %}
+    <img id="selected-image" class="selected-image" src="{{ url_for('image', frame_id=first.id) }}" alt="{{ scene.name }} 的前向相机画面">
+    <p class="frame-time" id="selected-time">拍摄于 {{ first.timestamp_us|time }}</p>
+    <div class="frames" aria-label="选择关键帧">
+      {% for frame in scene.frames %}
+      <a class="frame-choice" href="{{ url_for('image', frame_id=frame.id) }}" data-time="{{ frame.timestamp_us|time }}" aria-current="{{ 'true' if frame.id == first.id else 'false' }}">
+        <img src="{{ url_for('image', frame_id=frame.id) }}" alt="关键帧 {{ loop.index }}"><span>{{ (frame.timestamp_us|time)[11:] }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  <section class="panel track-panel">
+    <div class="panel-heading"><h2>自车轨迹</h2><span class="muted">{{ scene.track|length }} 个采样点</span></div>
+    <canvas id="trajectory" role="img" aria-label="自车轨迹、路口范围与急刹估算位置"></canvas>
+    <p class="legend"><span class="track-key">自车轨迹</span><span class="brake-key">急刹估算</span><span class="region-key">预设路口</span></p>
+    <div class="events">
+      <h3>急刹估算事件</h3>
+      {% for event in scene.events %}
+      <p><time>{{ event.timestamp_us|time }}</time><br>约 {{ '%.2f'|format(event.acceleration) }} m/s² · X {{ '%.2f'|format(event.x) }}，Y {{ '%.2f'|format(event.y) }}</p>
+      {% else %}<p class="muted">该片段没有达到演示阈值的减速事件。</p>{% endfor %}
+    </div>
+  </section>
+</div>
+<script id="track-data" type="application/json">{{ {'track': scene.track, 'events': scene.events, 'regions': scene.regions}|tojson }}</script>
+<script src="{{ url_for('static', filename='detail.js') }}" defer></script>
+{% endblock %}

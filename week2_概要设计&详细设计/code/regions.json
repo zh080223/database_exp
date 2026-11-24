@@ -1,0 +1,5 @@
+[
+  {"id": "boston-turn", "name": "波士顿 · 转弯车辆路口", "location": "boston-seaport", "bounds": [633, 1603, 655, 1625], "reference_scene": "scene-0103"},
+  {"id": "boston-signal", "name": "波士顿 · 信号灯路口", "location": "boston-seaport", "bounds": [304, 659, 325, 680], "reference_scene": "scene-0757"},
+  {"id": "onenorth-turn", "name": "新加坡 One-North · 左转路口", "location": "singapore-onenorth", "bounds": [391, 1118, 406, 1148], "reference_scene": "scene-0061"}
+]

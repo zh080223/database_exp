@@ -1,0 +1,19 @@
+services:
+  postgis:
+    image: postgis/postgis:17-3.7
+    environment:
+      POSTGRES_DB: scenes
+      POSTGRES_USER: scenes
+      POSTGRES_PASSWORD: scenes_demo
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - scene-postgis:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scenes -d scenes"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  scene-postgis:
